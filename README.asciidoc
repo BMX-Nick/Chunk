@@ -1,0 +1,4 @@
+Chunk
+-----
+
+Chunk is a tool for sending data from a mobile phone in chunks of different sizes at different intervals for the purpose of finding an optimal combination for maximum battery life.
