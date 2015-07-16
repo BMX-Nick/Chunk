@@ -2,6 +2,7 @@ package edu.missouri.chunk;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +18,8 @@ import chunk.missouri.edu.chunk.R;
 
 
 public class MainActivity extends Activity {
+
+    public static final String TAG = "MainActivity";
 
     private DataTransmitter dataTransmitter;
 
@@ -75,8 +78,10 @@ public class MainActivity extends Activity {
                         e.printStackTrace();
                     }
 
-                    // TODO Call whatever setters needed, sending them chunkSizeKB, intervalSeconds, and uri.
-
+                    // Initialize and start the data transmitter.
+                    Log.w(TAG, "Initializing and starting data transmitter");
+                    dataTransmitter = new DataTransmitter(getApplicationContext(), uri, chunkSizeKB, intervalSeconds);
+                    dataTransmitter.start();
                 }
                 //      Use PendingIntent and AlarmManager here just like in the NIMH app.
                 // }
