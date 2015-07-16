@@ -22,6 +22,18 @@ public class DataTransmitter {
     private int freq;
 
     /**
+     * Constructor
+     * @param uri the URI of the server to which garbage data will be sent
+     * @param size the size of the data in KB
+     * @param freq the update frequency in seconds
+     */
+    public DataTransmitter(URI uri, int size, int freq){
+        uri = uri;
+        size = size;
+        freq = freq;
+    }
+
+    /**
      *  Starts sending data.
      *
      * @throws IllegalStateException Thrown if the transmitter is already running or the uri is null
