@@ -32,15 +32,15 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         String[] chunks = {
-                "1K",
-                "100K",
-                "1MB",
-                "10MB"
+                "100",
+                "1024",
+                "10240"
         };
 
         String[] intervals = {
-                "30 Sec",
-                "60 Sec"
+                "60",
+                "300",
+                "600"
         };
 
         urlEditText     = (EditText) findViewById(R.id.urlEdit);
@@ -60,8 +60,24 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-                // TODO
-                // if (chunksSpinner has a value and intervalSpinner has a value) {
+                // If all the fields are filled out when start is pressed,
+                if(chunksSpinner.getSelectedItem().toString().length() > 0
+                        && interValSpinner.getSelectedItem().toString().length() > 0
+                        && urlEditText.getText().toString().length() > 0) {
+
+                    // Collect the user input
+                    int chunkSizeKB = Integer.parseInt(chunksSpinner.getSelectedItem().toString());
+                    int intervalSeconds = Integer.parseInt(interValSpinner.getSelectedItem().toString());
+                    URI uri = null;
+                    try {
+                        uri = new URI(urlEditText.getText().toString());
+                    } catch (URISyntaxException e) {
+                        e.printStackTrace();
+                    }
+
+                    // TODO Call whatever setters needed, sending them chunkSizeKB, intervalSeconds, and uri.
+
+                }
                 //      Use PendingIntent and AlarmManager here just like in the NIMH app.
                 // }
             }
