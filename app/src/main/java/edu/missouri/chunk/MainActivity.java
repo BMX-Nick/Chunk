@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -49,6 +50,18 @@ public class MainActivity extends Activity {
 
         chunksSpinner.setAdapter(chunk);
         interValSpinner.setAdapter(interval);
+
+        // On click listener
+        startButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // TODO
+                // if (chunksSpinner has a value and intervalSpinner has a value) {
+                //      Use PendingIntent and AlarmManager here just like in the NIMH app.
+                // }
+            }
+        });
     }
 
     @Override
@@ -72,4 +85,5 @@ public class MainActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
+
 }
