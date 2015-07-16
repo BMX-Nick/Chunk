@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
@@ -16,6 +17,9 @@ public class MainActivity extends Activity {
     private EditText urlEditText;
     private Spinner  chunksSpinner;
     private Spinner  interValSpinner;
+
+    private Button startButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +41,8 @@ public class MainActivity extends Activity {
         urlEditText     = (EditText) findViewById(R.id.urlEdit);
         chunksSpinner   = (Spinner)  findViewById(R.id.chunkSizeSpinner);
         interValSpinner = (Spinner)  findViewById(R.id.intervalSpinner);
+
+        startButton = (Button) findViewById(R.id.startButton);
 
         ArrayAdapter<String> chunk    = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, chunks);
         ArrayAdapter<String> interval = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, intervals);
