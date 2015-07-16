@@ -33,6 +33,10 @@ public class DataTransmitter {
 
        if(uri == null) {
            throw new IllegalStateException("URI cannot be null");
+       } else if(size == 0) {
+           throw new IllegalStateException("Size cannot be null");
+       } else if(freq == 0) {
+           throw new IllegalStateException("Frequency cannot be null");
        }
 
        state = State.STARTED;
