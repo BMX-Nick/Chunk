@@ -10,6 +10,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import chunk.missouri.edu.chunk.R;
 
 
@@ -64,7 +67,12 @@ public class MainActivity extends Activity {
             }
         });
 
-        dataTransmitter = new DataTransmitter();
+        // BUG: Change my values!
+        try {
+            dataTransmitter = new DataTransmitter(getApplicationContext(), new URI("http://badurl.com"), 0, 0);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

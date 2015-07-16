@@ -1,5 +1,11 @@
 package edu.missouri.chunk;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
+
 import java.net.URI;
 
 /**
@@ -8,6 +14,8 @@ import java.net.URI;
  * @author Andrew Smith
  */
 public class DataTransmitter {
+    private final Context context;
+
     /**
      * Represents the states of the transmitter
      */
@@ -23,12 +31,14 @@ public class DataTransmitter {
 
     /**
      * Constructor
-     * @param uri the URI of the server to which garbage data will be sent
+     * @param uri  the URI of the server to which garbage data will be sent
      * @param size the size of the data in KB
      * @param freq the update frequency in seconds
      */
-    public DataTransmitter(URI uri, int size, int freq){
-        uri = uri;
+    public DataTransmitter(Context context, URI uri, int size, int freq){
+        this.context = context;
+        
+        uri  = uri;
         size = size;
         freq = freq;
     }
@@ -56,9 +66,29 @@ public class DataTransmitter {
        enableAlarm();
    }
 
+    private Context getApplicationContext() {
+        return context;
+    }
 // ************* TODO: Implement
     private void enableAlarm() {
-        throw new UnsupportedOperationException("Not implemented");
+        long millisecondsTilFirstTrigger = 60000L;
+        long intervalToNextAlarm         = 60000L;
+
+        Log.w("DataTransmitter", "Preparing to initiate Alarm Manager. Should start syncing in "
+                + Long.toString(millisecondsTilFirstTrigger)
+                + " milliseconds, and once every "
+                + Long.toString(intervalToNextAlarm)
+                + " milliseconds thereafter.");
+
+
+        AlarmManager alarmMgr = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+        Intent mIntent = new Intent(getApplicationContext(), SyncService.class);
+
+        Log.w("DataTransmitter", "About to begin syncing in 30 seconds, hopefully.");
+
+        alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
+                millisecondsTilFirstTrigger,
+                intervalToNextAlarm, PendingIntent.getService(getApplicationContext(), 30, mIntent, PendingIntent.FLAG_UPDATE_CURRENT));
     }
 
     private void disableAlarm() {
