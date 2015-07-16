@@ -15,11 +15,12 @@ import chunk.missouri.edu.chunk.R;
 
 public class MainActivity extends Activity {
 
+    private DataTransmitter dataTransmitter;
+
     private EditText urlEditText;
     private Spinner  chunksSpinner;
     private Spinner  interValSpinner;
-
-    private Button startButton;
+    private Button   startButton;
 
 
     @Override
@@ -62,6 +63,8 @@ public class MainActivity extends Activity {
                 // }
             }
         });
+
+        dataTransmitter = new DataTransmitter();
     }
 
     @Override
