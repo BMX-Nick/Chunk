@@ -5,13 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 
 /**
  * Created by Jay Kelner on 7/2/15.
@@ -45,11 +43,7 @@ public class SyncService extends IntentService {
 
         final int totalBytes = size * 1024;
 
-        bytes = new byte[totalBytes];
-
-        for(int i = 0; i < totalBytes; i++) {
-            bytes[i] = (byte) (i % Byte.MAX_VALUE);
-        }
+        bytes = (byte[]) extras.get("bytes");
 
         // Create a connectivity manager to monitor our connection status.
         Context             context       = getApplicationContext();
