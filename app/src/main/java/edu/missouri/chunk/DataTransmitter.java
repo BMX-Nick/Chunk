@@ -73,8 +73,8 @@ public class DataTransmitter {
     }
 // ************* TODO: Implement
     private void enableAlarm() {
-        long millisecondsTilFirstTrigger = getFreq() * 1000;
-        long intervalToNextAlarm         = millisecondsTilFirstTrigger;
+        long millisecondsTilFirstTrigger = 0;
+        long intervalToNextAlarm         =  getFreq() * 1000;
 
         Log.w("DataTransmitter", "Preparing to initiate Alarm Manager. Should start syncing in "
                 + Long.toString(millisecondsTilFirstTrigger)
@@ -82,19 +82,15 @@ public class DataTransmitter {
                 + Long.toString(intervalToNextAlarm)
                 + " milliseconds thereafter.");
 
+
         AlarmManager alarmMgr = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
         Intent mIntent = new Intent(getApplicationContext(), SyncService.class);
-
-        mIntent.putExtra("uri",       getUri());
-        mIntent.putExtra("frequency", getFreq());
-        mIntent.putExtra("size",      getSize());
 
         Log.w("DataTransmitter", "About to begin syncing in 30 seconds, hopefully.");
 
         alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
                 millisecondsTilFirstTrigger,
                 intervalToNextAlarm, PendingIntent.getService(getApplicationContext(), 30, mIntent, PendingIntent.FLAG_UPDATE_CURRENT));
-
     }
 
     private void disableAlarm() {
