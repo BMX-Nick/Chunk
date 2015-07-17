@@ -88,7 +88,7 @@ public class DataTransmitter {
 
         Log.w("DataTransmitter", "About to begin syncing in 30 seconds, hopefully.");
 
-        alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
+        alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 millisecondsTilFirstTrigger,
                 intervalToNextAlarm, PendingIntent.getService(getApplicationContext(), 30, mIntent, PendingIntent.FLAG_UPDATE_CURRENT));
     }
