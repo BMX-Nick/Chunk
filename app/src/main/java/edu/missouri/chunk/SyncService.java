@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -17,18 +19,13 @@ import java.net.URISyntaxException;
 public class SyncService extends IntentService {
 
     public static final String TAG = "SyncService";
-    public static final String URL = "http://dslsrv8.cs.missouri.edu/~jmkwdf/CrtNIMH/example.php";
 
     private URI uri;
 
+    byte[] bytes;
+
     public SyncService(){
         super("SyncService");
-
-        try {
-            uri = new URI(URL);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -39,6 +36,20 @@ public class SyncService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         Log.d(TAG, "Service started in SyncService");
+
+        Bundle extras = intent.getExtras();
+
+        uri  = (URI) extras.get("uri");
+
+        int size = extras.getInt("size");
+
+        final int totalBytes = size * 1024;
+
+        bytes = new byte[totalBytes];
+
+        for(int i = 0; i < totalBytes; i++) {
+            bytes[i] = (byte) (i % Byte.MAX_VALUE);
+        }
 
         // Create a connectivity manager to monitor our connection status.
         Context             context       = getApplicationContext();
@@ -59,6 +70,7 @@ public class SyncService extends IntentService {
      * Performs the synchronization with the server using TransmitJSONData
      */
     private void performSync() {
-        new TransmitData(uri).execute(new byte[]{});
+
+        new TransmitData(uri).execute(bytes);
     }
 }

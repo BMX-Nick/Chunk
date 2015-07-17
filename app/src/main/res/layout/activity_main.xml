@@ -19,7 +19,8 @@
         android:layout_alignParentEnd="true"
         android:autoText="false"
         android:hint="@string/URL"
-        android:inputType="textUri"/>
+        android:inputType="textUri"
+        android:text="http://dslsrv8.cs.missouri.edu/~jmkwdf/CrtNIMH/example.php"/>
 
     <Spinner
         android:layout_width="wrap_content"
@@ -42,7 +43,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start"
+        android:text="@string/start"
         android:id="@+id/startButton"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"

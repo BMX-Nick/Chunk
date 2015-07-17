@@ -11,6 +11,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
@@ -62,10 +63,8 @@ public class TransmitData extends AsyncTask<byte[], Void, Boolean> {
         params.add(new BasicNameValuePair("data", message));
 
         try {
-            request.setEntity(new UrlEncodedFormEntity(params));
-
-            HttpResponse response       = new DefaultHttpClient().execute(request);
-            HttpEntity   entity         = response.getEntity();
+            request.setEntity(new ByteArrayEntity(data[0]));
+            HttpResponse response = new DefaultHttpClient().execute(request);
 
             int statusCode = response.getStatusLine().getStatusCode();
 

@@ -1,6 +1,9 @@
 package edu.missouri.chunk;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -13,8 +16,6 @@ import android.widget.Spinner;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-
-import chunk.missouri.edu.chunk.R;
 
 
 public class MainActivity extends Activity {
@@ -63,28 +64,52 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-                // If all the fields are filled out when start is pressed,
-                if(chunksSpinner.getSelectedItem().toString().length() > 0
+                final boolean areFieldsSet =
+                           chunksSpinner.getSelectedItem().toString().length()   > 0
                         && interValSpinner.getSelectedItem().toString().length() > 0
-                        && urlEditText.getText().toString().length() > 0) {
+                        && urlEditText.getText().toString().length()             > 0;
+
+                // If all the fields are filled out when start is pressed,
+                if (areFieldsSet) {
 
                     // Collect the user input
-                    int chunkSizeKB = Integer.parseInt(chunksSpinner.getSelectedItem().toString());
+                    int chunkSizeKB     = Integer.parseInt(chunksSpinner.getSelectedItem().toString());
                     int intervalSeconds = Integer.parseInt(interValSpinner.getSelectedItem().toString());
-                    URI uri = null;
-                    try {
-                        uri = new URI(urlEditText.getText().toString());
-                    } catch (URISyntaxException e) {
-                        e.printStackTrace();
-                    }
+                    URI uri;
 
-                    // Initialize and start the data transmitter.
-                    Log.w(TAG, "Initializing and starting data transmitter");
-                    dataTransmitter = new DataTransmitter(getApplicationContext(), uri, chunkSizeKB, intervalSeconds);
-                    dataTransmitter.start();
+                    if (dataTransmitter.isRunning()) {
+                        dataTransmitter.stop();
+                        startButton.setText(R.string.start);
+                    } else {
+                        try {
+                            uri = new URI(urlEditText.getText().toString());
+
+                            // Initialize and start the data transmitter.
+                            Log.w(TAG, "Initializing and starting data transmitter");
+                            dataTransmitter.setFreq(intervalSeconds);
+                            dataTransmitter.setSize(chunkSizeKB);
+                            dataTransmitter.setUri(uri);
+
+
+                            dataTransmitter.start();
+                            startButton.setText(R.string.stop);
+                        } catch (URISyntaxException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+
+                    builder.setTitle("Error").setMessage("Fields must not be empty.").setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.cancel();
+                        }
+                    });
+
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
                 }
-                //      Use PendingIntent and AlarmManager here just like in the NIMH app.
-                // }
             }
         });
 
