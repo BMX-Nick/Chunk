@@ -71,10 +71,13 @@ public class DataTransmitter {
     }
 // ************* TODO: Implement
     private void enableAlarm() {
-        long millisecondsTilFirstTrigger = 60000L;
-        long intervalToNextAlarm         = 60000L;
+        // First upload should trigger immediately
+        long millisecondsTilFirstTrigger = 0L;
 
-        Log.w("DataTransmitter", "Preparing to initiate Alarm Manager. Should start syncing in "
+        // Second upload and every upload thereafter triggers every freq seconds, converted to ms
+        long intervalToNextAlarm         = freq * 1000L;
+
+        Log.w("DataTransmitter", "Preparing to initiate Alarm Manager. Should start uploading in "
                 + Long.toString(millisecondsTilFirstTrigger)
                 + " milliseconds, and once every "
                 + Long.toString(intervalToNextAlarm)
@@ -86,7 +89,7 @@ public class DataTransmitter {
 
         Log.w("DataTransmitter", "About to begin syncing in 30 seconds, hopefully.");
 
-        alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
+        alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 millisecondsTilFirstTrigger,
                 intervalToNextAlarm, PendingIntent.getService(getApplicationContext(), 30, mIntent, PendingIntent.FLAG_UPDATE_CURRENT));
     }
