@@ -4,5 +4,5 @@
     <string name="URL">URL</string>
     <string name="start">Start</string>
     <string name="defaultUrl">http://dslsrv8.cs.missouri.edu/~jmkwdf/CrtNIMH/example.php</string>
-    <string name="running">Running...</string>
+    <string name="running">Running…</string>
 </resources>

@@ -42,7 +42,7 @@ public class TransmitData extends AsyncTask<byte[], Void, Boolean> {
 
     @Override
     protected Boolean doInBackground(byte[]... data) {
-        boolean status200 = false;
+        boolean status200 = true;
 
         Log.d(TAG, String.format(LOG_THREAD_ID_MSG, Thread.currentThread().getId()));
 
@@ -57,12 +57,10 @@ public class TransmitData extends AsyncTask<byte[], Void, Boolean> {
             switch (statusCode) {
                 case HttpStatus.SC_BAD_REQUEST:
                     String results = "BAD REQUEST ENCOUNTERED";
-                    status200 = true;
-                    Log.d(TAG, results);
+                    status200 = false;
+                    Log.e(TAG, results);
+                    Log.e(TAG, String.format(POST_ERROR_MSG, uriString, statusCode));
                     break;
-                default:
-                    Log.w(TAG, String.format(POST_ERROR_MSG, uriString, statusCode));
-                    return false;
             }
         }catch (ClientProtocolException e) {
             Log.e(TAG, String.format(CLIENT_PROTOCOL_EXCEPTION_MSG, uriString));
