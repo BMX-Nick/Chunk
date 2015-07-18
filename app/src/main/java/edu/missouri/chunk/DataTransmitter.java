@@ -89,14 +89,15 @@ class DataTransmitter {
         Resources resources = context.getResources();
 
         switch (size) {
-            case 100:
-                is = resources.openRawResource(R.raw.hundredkb);
-                break;
             case 1024:
                 is = resources.openRawResource(R.raw.onemb);
                 break;
             case 10240:
                 is = resources.openRawResource(R.raw.tenmb);
+                break;
+            case 100:
+            default:
+                is = resources.openRawResource(R.raw.hundredkb);
                 break;
         }
 
@@ -140,6 +141,7 @@ class DataTransmitter {
      *
      * @throws IllegalStateException Thrown if the transmitter is already stopped
      */
+    @SuppressWarnings("unused")
     public void stop() throws IllegalStateException {
         if(!isRunning()) {
             throw new IllegalStateException("DataTransmitter is already stopped");
@@ -154,6 +156,7 @@ class DataTransmitter {
      *
      * @return The URI that the data is being sent to
      */
+    @SuppressWarnings("unused")
     public URI getUri() {
         return uri;
     }
@@ -173,6 +176,7 @@ class DataTransmitter {
      *
      * @return The size of the data that is sent to the URI at each interval
      */
+    @SuppressWarnings("unused")
     public int getSize() {
         return size;
     }
@@ -192,6 +196,7 @@ class DataTransmitter {
      *
      * @return The frequency at which data will be sent
      */
+    @SuppressWarnings("WeakerAccess")
     public int getFreq() {
         return freq;
     }

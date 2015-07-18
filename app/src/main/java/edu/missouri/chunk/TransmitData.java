@@ -18,6 +18,7 @@ import java.net.URI;
  *
  * @author Andrew Smith
  */
+@SuppressWarnings("deprecation")
 class TransmitData extends AsyncTask<byte[], Void, Boolean> {
 
     // *************************** Format Strings *********************************************************
@@ -60,6 +61,8 @@ class TransmitData extends AsyncTask<byte[], Void, Boolean> {
                     status200 = false;
                     Log.e(TAG, results);
                     Log.e(TAG, String.format(POST_ERROR_MSG, uriString, statusCode));
+                    break;
+                default:
                     break;
             }
         }catch (ClientProtocolException e) {
