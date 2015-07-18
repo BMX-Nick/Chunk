@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 
 import java.net.URI;
@@ -22,10 +23,11 @@ public class MainActivity extends Activity {
 
     private DataTransmitter dataTransmitter;
 
-    private EditText urlEditText;
-    private Spinner  chunksSpinner;
-    private Spinner  interValSpinner;
-    private Button   startButton;
+    private EditText    urlEditText;
+    private Spinner     chunksSpinner;
+    private Spinner     interValSpinner;
+    private Button      startButton;
+    private ProgressBar progressBar;
 
 
     @Override
@@ -45,11 +47,13 @@ public class MainActivity extends Activity {
                 "600"
         };
 
-        urlEditText     = (EditText) findViewById(R.id.urlEdit);
-        chunksSpinner   = (Spinner)  findViewById(R.id.chunkSizeSpinner);
-        interValSpinner = (Spinner)  findViewById(R.id.intervalSpinner);
+        urlEditText     = (EditText)    findViewById(R.id.urlEdit);
+        chunksSpinner   = (Spinner)     findViewById(R.id.chunkSizeSpinner);
+        interValSpinner = (Spinner)     findViewById(R.id.intervalSpinner);
+        progressBar     = (ProgressBar) findViewById(R.id.progressBar);
+        startButton     = (Button)      findViewById(R.id.startButton);
 
-        startButton = (Button) findViewById(R.id.startButton);
+        progressBar.setVisibility(View.INVISIBLE);
 
         ArrayAdapter<String> chunk    = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, chunks);
         ArrayAdapter<String> interval = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, intervals);
@@ -85,7 +89,13 @@ public class MainActivity extends Activity {
                             dataTransmitter.setSize(chunkSizeKB);
                             dataTransmitter.setUri(uri);
                             dataTransmitter.start();
+
+                            urlEditText.setEnabled(false);
+                            chunksSpinner.setEnabled(false);
+                            interValSpinner.setEnabled(false);
+                            progressBar.setVisibility(View.VISIBLE);
                             startButton.setEnabled(false);
+
                             startButton.setText(getString(R.string.running));
                         } catch (URISyntaxException e) {
                             e.printStackTrace();
