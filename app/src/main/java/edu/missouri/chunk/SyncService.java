@@ -39,10 +39,6 @@ public class SyncService extends IntentService {
 
         uri  = (URI) extras.get("uri");
 
-        int size = extras.getInt("size");
-
-        final int totalBytes = size * 1024;
-
         bytes = (byte[]) extras.get("bytes");
 
         // Create a connectivity manager to monitor our connection status.
