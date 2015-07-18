@@ -1,9 +1,11 @@
 package edu.missouri.chunk;
 
 import android.app.AlarmManager;
+import android.app.Application;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.util.Log;
 
@@ -35,17 +37,9 @@ public class DataTransmitter {
 
     /**
      * Constructor
-     * @param uri  the URI of the server to which garbage data will be sent
-     * @param size the size of the data in KB
-     * @param freq the update frequency in seconds
      */
-    public DataTransmitter(Context context, URI uri, int size, int freq){
+    public DataTransmitter(Context context){
         this.context = context;
-        
-        this.uri  = uri;
-        this.size = size;
-        this.freq = freq;
-
         this.state = State.STOPPED;
     }
 
@@ -92,10 +86,10 @@ public class DataTransmitter {
         Intent mIntent = new Intent(getApplicationContext(), SyncService.class);
         mIntent.putExtra("uri", uri);
 
-        byte[] bytes = null;
         InputStream is = null;
 
-        Resources resources = new Resources(null, null, null);
+        Resources resources = context.getResources();
+
 
         switch (size) {
             case 100:
@@ -108,7 +102,7 @@ public class DataTransmitter {
                 is = resources.openRawResource(R.raw.tenmb);
                 break;
         }
-        
+
         mIntent.putExtra("bytes", toByteArray(is));
 
         Log.w("DataTransmitter", "About to begin syncing in 30 seconds, hopefully.");
@@ -125,10 +119,10 @@ public class DataTransmitter {
      */
     private byte[] toByteArray(InputStream is) {
         byte[] bytes = null;
-        DataInputStream dataIs = null;
+        DataInputStream dataIs;
 
         try {
-            bytes = new byte[(int) is.available()];
+            bytes = new byte[is.available()];
             dataIs = new DataInputStream(is);
             dataIs.readFully(bytes);
         } catch (IOException ioe) {

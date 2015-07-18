@@ -51,8 +51,8 @@ public class MainActivity extends Activity {
 
         startButton = (Button) findViewById(R.id.startButton);
 
-        ArrayAdapter<String> chunk    = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, chunks);
-        ArrayAdapter<String> interval = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, intervals);
+        ArrayAdapter<String> chunk    = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, chunks);
+        ArrayAdapter<String> interval = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, intervals);
 
         chunksSpinner.setAdapter(chunk);
         interValSpinner.setAdapter(interval);
@@ -110,13 +110,7 @@ public class MainActivity extends Activity {
                 }
             }
         });
-
-        // BUG: Change my values!
-        try {
-            dataTransmitter = new DataTransmitter(getApplicationContext(), new URI("http://badurl.com"), 0, 0);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
+        dataTransmitter = new DataTransmitter(this);
     }
 
     @Override

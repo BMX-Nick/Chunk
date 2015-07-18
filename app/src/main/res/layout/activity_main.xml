@@ -20,7 +20,7 @@
         android:autoText="false"
         android:hint="@string/URL"
         android:inputType="textUri"
-        android:text="http://dslsrv8.cs.missouri.edu/~jmkwdf/CrtNIMH/example.php"/>
+        android:text="@string/defaultUrl"/>
 
     <Spinner
         android:layout_width="wrap_content"
