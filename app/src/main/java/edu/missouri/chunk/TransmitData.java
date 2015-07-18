@@ -1,26 +1,17 @@
 package edu.missouri.chunk;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Sends data to a URI using HTTP POST.
@@ -31,7 +22,6 @@ public class TransmitData extends AsyncTask<byte[], Void, Boolean> {
 
     // *************************** Format Strings *********************************************************
     private static final String POST_ERROR_MSG                = "POST to %s returned code %s ";
-    private static final String UNSUPPORTED_ENCODING_MSG      = "Unable to encode parameter %s";
     private static final String CLIENT_PROTOCOL_EXCEPTION_MSG = "Client protocol writing data to %s";
     private static final String IO_ERROR_MSG                  = "I/O error writing data to %s";
     private static final String TAG                           = "TransmitData";
@@ -52,15 +42,11 @@ public class TransmitData extends AsyncTask<byte[], Void, Boolean> {
 
     @Override
     protected Boolean doInBackground(byte[]... data) {
-        String  message   = new String(data[0]);
         boolean status200 = false;
 
         Log.d(TAG, String.format(LOG_THREAD_ID_MSG, Thread.currentThread().getId()));
 
         HttpPost request = new HttpPost(uri);
-
-        List<NameValuePair> params = new ArrayList<NameValuePair>();
-        params.add(new BasicNameValuePair("data", message));
 
         try {
             request.setEntity(new ByteArrayEntity(data[0]));
@@ -78,11 +64,7 @@ public class TransmitData extends AsyncTask<byte[], Void, Boolean> {
                     Log.w(TAG, String.format(POST_ERROR_MSG, uriString, statusCode));
                     return false;
             }
-        } catch (UnsupportedEncodingException e) {
-            Log.e(TAG, String.format(UNSUPPORTED_ENCODING_MSG, params.get(0)));
-            e.printStackTrace();
-            return false;
-        } catch (ClientProtocolException e) {
+        }catch (ClientProtocolException e) {
             Log.e(TAG, String.format(CLIENT_PROTOCOL_EXCEPTION_MSG, uriString));
             e.printStackTrace();
             return false;
@@ -91,6 +73,7 @@ public class TransmitData extends AsyncTask<byte[], Void, Boolean> {
             e.printStackTrace();
             return false;
         }
+
         return status200;
     }
 }
