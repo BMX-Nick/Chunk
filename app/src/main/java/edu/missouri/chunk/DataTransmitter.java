@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.util.Log;
 
+import java.io.DataInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
@@ -74,6 +76,7 @@ public class DataTransmitter {
         return context;
     }
 // ************* TODO: Implement
+
     private void enableAlarm() {
         long millisecondsTilFirstTrigger = 0;
         long intervalToNextAlarm         =  getFreq() * 1000;
@@ -94,7 +97,6 @@ public class DataTransmitter {
 
         Resources resources = new Resources(null, null, null);
 
-
         switch (size) {
             case 100:
                 is = resources.openRawResource(R.raw.hundredkb);
@@ -106,9 +108,8 @@ public class DataTransmitter {
                 is = resources.openRawResource(R.raw.tenmb);
                 break;
         }
-
-        // TODO How do we turn the input stream into bytes?
-//        mIntent.putExtra("bytes", toByteArray(is));
+        
+        mIntent.putExtra("bytes", toByteArray(is));
 
         Log.w("DataTransmitter", "About to begin syncing in 30 seconds, hopefully.");
         PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 0, mIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -116,6 +117,27 @@ public class DataTransmitter {
                 millisecondsTilFirstTrigger,
                 intervalToNextAlarm, pendingIntent);
     }
+
+    /**
+     * Converts an InputStream to a byte array
+     * @param is the InputStream to be converted
+     * @return the resulting byte array
+     */
+    private byte[] toByteArray(InputStream is) {
+        byte[] bytes = null;
+        DataInputStream dataIs = null;
+
+        try {
+            bytes = new byte[(int) is.available()];
+            dataIs = new DataInputStream(is);
+            dataIs.readFully(bytes);
+        } catch (IOException ioe) {
+            Log.w("DataTransmitter", "InputStream was already closed in toByteArray" + ioe.toString());
+        }
+
+        return bytes;
+    }
+
 
     private void disableAlarm() {
         throw new UnsupportedOperationException("Not implemented");
