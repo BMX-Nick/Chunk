@@ -4,8 +4,10 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.util.Log;
 
+import java.io.InputStream;
 import java.net.URI;
 
 /**
@@ -85,12 +87,34 @@ public class DataTransmitter {
 
         AlarmManager alarmMgr = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
         Intent mIntent = new Intent(getApplicationContext(), SyncService.class);
+        mIntent.putExtra("uri", uri);
+
+        byte[] bytes = null;
+        InputStream is = null;
+
+        Resources resources = new Resources(null, null, null);
+
+
+        switch (size) {
+            case 100:
+                is = resources.openRawResource(R.raw.hundredkb);
+                break;
+            case 1024:
+                is = resources.openRawResource(R.raw.onemb);
+                break;
+            case 10240:
+                is = resources.openRawResource(R.raw.tenmb);
+                break;
+        }
+
+        // TODO How do we turn the input stream into bytes?
+//        mIntent.putExtra("bytes", toByteArray(is));
 
         Log.w("DataTransmitter", "About to begin syncing in 30 seconds, hopefully.");
-
+        PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 0, mIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 millisecondsTilFirstTrigger,
-                intervalToNextAlarm, PendingIntent.getService(getApplicationContext(), 30, mIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+                intervalToNextAlarm, pendingIntent);
     }
 
     private void disableAlarm() {
