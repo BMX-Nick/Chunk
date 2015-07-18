@@ -75,10 +75,7 @@ public class MainActivity extends Activity {
                     int intervalSeconds = Integer.parseInt(interValSpinner.getSelectedItem().toString());
                     URI uri;
 
-                    if (dataTransmitter.isRunning()) {
-                        dataTransmitter.stop();
-                        startButton.setText(R.string.start);
-                    } else {
+                    if (!dataTransmitter.isRunning()) {
                         try {
                             uri = new URI(urlEditText.getText().toString());
 
@@ -87,10 +84,9 @@ public class MainActivity extends Activity {
                             dataTransmitter.setFreq(intervalSeconds);
                             dataTransmitter.setSize(chunkSizeKB);
                             dataTransmitter.setUri(uri);
-
-
                             dataTransmitter.start();
-                            startButton.setText(R.string.stop);
+                            startButton.setEnabled(false);
+                            startButton.setText(getString(R.string.running));
                         } catch (URISyntaxException e) {
                             e.printStackTrace();
                         }

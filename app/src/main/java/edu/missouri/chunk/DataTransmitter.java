@@ -90,7 +90,6 @@ public class DataTransmitter {
 
         Resources resources = context.getResources();
 
-
         switch (size) {
             case 100:
                 is = resources.openRawResource(R.raw.hundredkb);
