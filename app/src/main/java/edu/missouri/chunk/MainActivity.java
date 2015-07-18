@@ -84,7 +84,7 @@ public class MainActivity extends Activity {
                             uri = new URI(urlEditText.getText().toString());
 
                             // Initialize and start the data transmitter.
-                            Log.w(TAG, "Initializing and starting data transmitter");
+                            Log.d(TAG, "Initializing and starting data transmitter");
                             dataTransmitter.setFreq(intervalSeconds);
                             dataTransmitter.setSize(chunkSizeKB);
                             dataTransmitter.setUri(uri);

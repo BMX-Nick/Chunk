@@ -73,7 +73,7 @@ class DataTransmitter {
         long millisecondsTilFirstTrigger = 0;
         long intervalToNextAlarm         =  getFreq() * 1000;
 
-        Log.w("DataTransmitter", "Preparing to initiate Alarm Manager. Should start syncing in "
+        Log.d("DataTransmitter", "Preparing to initiate Alarm Manager. Should start syncing in "
                 + Long.toString(millisecondsTilFirstTrigger)
                 + " milliseconds, and once every "
                 + Long.toString(intervalToNextAlarm)
@@ -102,7 +102,7 @@ class DataTransmitter {
 
         mIntent.putExtra("bytes", toByteArray(is));
 
-        Log.w("DataTransmitter", "About to begin syncing in 30 seconds, hopefully.");
+        Log.d("DataTransmitter", String.format("About to begin syncing in %d milliseconds, hopefully.", intervalToNextAlarm));
         PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 0, mIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 millisecondsTilFirstTrigger,
@@ -123,7 +123,7 @@ class DataTransmitter {
             dataIs = new DataInputStream(is);
             dataIs.readFully(bytes);
         } catch (IOException ioe) {
-            Log.w("DataTransmitter", "InputStream was already closed in toByteArray" + ioe.toString());
+            Log.e("DataTransmitter", "InputStream was already closed in toByteArray" + ioe.toString());
         }
 
         return bytes;
