@@ -18,7 +18,7 @@ import java.net.URI;
  *
  * @author Andrew Smith
  */
-public class TransmitData extends AsyncTask<byte[], Void, Boolean> {
+class TransmitData extends AsyncTask<byte[], Void, Boolean> {
 
     // *************************** Format Strings *********************************************************
     private static final String POST_ERROR_MSG                = "POST to %s returned code %s ";

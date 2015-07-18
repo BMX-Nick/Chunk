@@ -17,7 +17,7 @@ import java.net.URI;
  *
  * @author Andrew Smith
  */
-public class DataTransmitter {
+class DataTransmitter {
     private final Context context;
 
     /**
