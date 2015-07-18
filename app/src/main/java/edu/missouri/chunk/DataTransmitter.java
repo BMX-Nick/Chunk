@@ -84,7 +84,7 @@ class DataTransmitter {
         Intent mIntent = new Intent(getApplicationContext(), SyncService.class);
         mIntent.putExtra("uri", uri);
 
-        InputStream is = null;
+        InputStream is;
 
         Resources resources = context.getResources();
 
