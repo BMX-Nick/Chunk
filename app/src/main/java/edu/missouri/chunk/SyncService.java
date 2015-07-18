@@ -12,15 +12,15 @@ import android.util.Log;
 import java.net.URI;
 
 /**
- * Created by Jay Kelner on 7/2/15.
+ * @author Jay Kelner
  */
 public class SyncService extends IntentService {
 
-    public static final String TAG = "SyncService";
+    private static final String TAG = "SyncService";
 
     private URI uri;
 
-    byte[] bytes;
+    private byte[] bytes;
 
     public SyncService(){
         super("SyncService");

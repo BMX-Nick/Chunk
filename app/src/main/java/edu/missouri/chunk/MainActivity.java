@@ -18,7 +18,7 @@ import java.net.URISyntaxException;
 
 public class MainActivity extends Activity {
 
-    public static final String TAG = "MainActivity";
+    private static final String TAG = "MainActivity";
 
     private DataTransmitter dataTransmitter;
 
