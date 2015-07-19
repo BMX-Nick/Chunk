@@ -46,7 +46,7 @@ class DataTransmitter {
      *
      * @throws IllegalStateException Thrown if the transmitter is already running or the uri is null
      */
-   public void start() throws IllegalStateException {
+   public void start() {
        if(isRunning()) {
            throw new IllegalStateException("DataTransmitter is already started");
        }
@@ -124,7 +124,7 @@ class DataTransmitter {
             dataIs = new DataInputStream(is);
             dataIs.readFully(bytes);
         } catch (IOException ioe) {
-            Log.e("DataTransmitter", "InputStream was already closed in toByteArray" + ioe.toString());
+            Log.e("DataTransmitter", String.format("InputStream was already closed in toByteArray %s", ioe.toString()));
         }
 
         return bytes;
@@ -142,7 +142,7 @@ class DataTransmitter {
      * @throws IllegalStateException Thrown if the transmitter is already stopped
      */
     @SuppressWarnings("unused")
-    public void stop() throws IllegalStateException {
+    public void stop() {
         if(!isRunning()) {
             throw new IllegalStateException("DataTransmitter is already stopped");
         }
@@ -166,7 +166,7 @@ class DataTransmitter {
      * @param  uri                   The URI to send data to
      * @throws IllegalStateException Thrown if the transmitter is already running
      */
-    public void setUri(URI uri) throws IllegalStateException {
+    public void setUri(URI uri) {
        verifyNotRunning();
 
         this.uri = uri;
@@ -186,7 +186,7 @@ class DataTransmitter {
      * @param  size                  The size of the data to send to the URI at each interval
      * @throws IllegalStateException Thrown if the transmitter is already running
      */
-    public void setSize(int size) throws IllegalStateException {
+    public void setSize(int size) {
         verifyNotRunning();
 
         this.size = size;
@@ -206,7 +206,7 @@ class DataTransmitter {
      * @param  freq                  The frequency at which to send data
      * @throws IllegalStateException Thrown if the transmitter is already running
      */
-    public void setFreq(int freq) throws IllegalStateException {
+    public void setFreq(int freq) {
         verifyNotRunning();
 
         this.freq = freq;

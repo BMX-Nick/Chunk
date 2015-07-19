@@ -51,7 +51,9 @@ class TransmitData extends AsyncTask<byte[], Void, Boolean> {
 
         try {
             request.setEntity(new ByteArrayEntity(data[0]));
-            HttpResponse response = new DefaultHttpClient().execute(request);
+            DefaultHttpClient client = new DefaultHttpClient();
+
+            HttpResponse response = client.execute(request);
 
             int statusCode = response.getStatusLine().getStatusCode();
 
@@ -68,11 +70,11 @@ class TransmitData extends AsyncTask<byte[], Void, Boolean> {
         }catch (ClientProtocolException e) {
             Log.e(TAG, String.format(CLIENT_PROTOCOL_EXCEPTION_MSG, uriString));
             e.printStackTrace();
-            return false;
+            return Boolean.FALSE;
         } catch (IOException e) {
             Log.e(TAG, String.format(IO_ERROR_MSG, uriString));
             e.printStackTrace();
-            return false;
+            return Boolean.FALSE;
         }
 
         return status200;

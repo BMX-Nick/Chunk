@@ -29,23 +29,23 @@ public class MainActivity extends Activity {
     private Button      startButton;
     private ProgressBar progressBar;
 
+    private static final String[] CHUNKS = new String[]{
+            "100",
+            "1024",
+            "10240"
+    };
+
+    private static final String[] INTERVALS = new String[]{
+            "60",
+            "300",
+            "600"
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        String[] chunks = {
-                "100",
-                "1024",
-                "10240"
-        };
-
-        String[] intervals = {
-                "60",
-                "300",
-                "600"
-        };
 
         urlEditText     = (EditText)    findViewById(R.id.urlEdit);
         chunksSpinner   = (Spinner)     findViewById(R.id.chunkSizeSpinner);
@@ -55,8 +55,8 @@ public class MainActivity extends Activity {
 
         progressBar.setVisibility(View.INVISIBLE);
 
-        ArrayAdapter<String> chunk    = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, chunks);
-        ArrayAdapter<String> interval = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, intervals);
+        ArrayAdapter<String> chunk    = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, CHUNKS);
+        ArrayAdapter<String> interval = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, INTERVALS);
 
         chunksSpinner.setAdapter(chunk);
         interValSpinner.setAdapter(interval);
