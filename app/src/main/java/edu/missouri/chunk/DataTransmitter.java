@@ -11,6 +11,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Date;
 
 /**
  * Sends data of a specified size to a URI at a regular interval.
@@ -19,6 +20,24 @@ import java.net.URI;
  */
 class DataTransmitter {
     private final Context context;
+    private Date start;
+    private Date end;
+
+    public Date getStart() {
+        return start;
+    }
+
+    public void setStart(Date start) {
+        this.start = start;
+    }
+
+    public Date getEnd() {
+        return end;
+    }
+
+    public void setEnd(Date end) {
+        this.end = end;
+    }
 
     /**
      * Represents the states of the transmitter
@@ -108,6 +127,7 @@ class DataTransmitter {
         alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 millisecondsTilFirstTrigger,
                 intervalToNextAlarm, pendingIntent);
+        start = new Date();
     }
 
     /**

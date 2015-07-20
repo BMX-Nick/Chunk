@@ -13,13 +13,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.DateFormat;
 
 public class MainActivity extends Activity {
 
     private static final String TAG = "MainActivity";
+    public static final DateFormat DATE_TIME_FORMAT = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.LONG);
 
     private DataTransmitter dataTransmitter;
 
@@ -28,6 +31,7 @@ public class MainActivity extends Activity {
     private Spinner     interValSpinner;
     private Button      startButton;
     private ProgressBar progressBar;
+    private TextView    startTextView;
 
     private static final String[] CHUNKS = new String[]{
             "100",
@@ -54,6 +58,8 @@ public class MainActivity extends Activity {
         startButton     = (Button)      findViewById(R.id.startButton);
 
         progressBar.setVisibility(View.INVISIBLE);
+
+        startTextView = (TextView) findViewById(R.id.startTextView);
 
         ArrayAdapter<String> chunk    = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, CHUNKS);
         ArrayAdapter<String> interval = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, INTERVALS);
@@ -97,6 +103,9 @@ public class MainActivity extends Activity {
                             startButton.setEnabled(false);
 
                             startButton.setText(getString(R.string.running));
+                            final String startTime = DATE_TIME_FORMAT.format(dataTransmitter.getStart());
+
+                            startTextView.setText(String.format("Start: %s", startTime));
                         } catch (URISyntaxException e) {
                             e.printStackTrace();
                         }
@@ -117,6 +126,8 @@ public class MainActivity extends Activity {
             }
         });
         dataTransmitter = new DataTransmitter(this);
+
+
     }
 
     @Override
