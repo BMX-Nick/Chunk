@@ -3,6 +3,7 @@ package edu.missouri.chunk;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -18,11 +19,13 @@ import android.widget.TextView;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.DateFormat;
+import java.util.Date;
 
 public class MainActivity extends Activity {
 
     private static final String TAG = "MainActivity";
     public static final DateFormat DATE_TIME_FORMAT = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.LONG);
+    public static boolean performingSync;
 
     private DataTransmitter dataTransmitter;
 
@@ -32,6 +35,7 @@ public class MainActivity extends Activity {
     private Button      startButton;
     public static ProgressBar progressBar;
     private TextView    startTextView;
+    private TextView    endTextView;
 
     public static int counter;
 
@@ -65,11 +69,11 @@ public class MainActivity extends Activity {
         progressBar.setVisibility(View.INVISIBLE);
 
         startTextView = (TextView) findViewById(R.id.startTextView);
-
+        endTextView = (TextView) findViewById(R.id.endTextView);
 
 
         ArrayAdapter<String> chunk    = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, CHUNKS);
-        ArrayAdapter<String> interval = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, INTERVALS);
+        final ArrayAdapter<String> interval = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, INTERVALS);
 
         chunksSpinner.setAdapter(chunk);
         interValSpinner.setAdapter(interval);
@@ -93,31 +97,33 @@ public class MainActivity extends Activity {
                     int intervalSeconds = Integer.parseInt(interValSpinner.getSelectedItem().toString());
                     URI uri;
 
-                    if (!dataTransmitter.isRunning()) {
-                        try {
-                            uri = new URI(urlEditText.getText().toString());
+                    try {
+                        uri = new URI(urlEditText.getText().toString());
 
-                            // Initialize and start the data transmitter.
-                            Log.d(TAG, "Initializing and starting data transmitter");
-                            dataTransmitter.setFreq(intervalSeconds);
-                            dataTransmitter.setSize(chunkSizeKB);
-                            dataTransmitter.setUri(uri);
-                            dataTransmitter.start();
+                        performingSync = true;
 
-                            urlEditText.setEnabled(false);
-                            chunksSpinner.setEnabled(false);
-                            interValSpinner.setEnabled(false);
-                            progressBar.setVisibility(View.VISIBLE);
-                            startButton.setEnabled(false);
+                        // Initialize and start the data transmitter.
+                        Log.d(TAG, "Initializing and starting data transmitter");
+                        dataTransmitter.setFreq(intervalSeconds);
+                        dataTransmitter.setSize(chunkSizeKB);
+                        dataTransmitter.setUri(uri);
+                        dataTransmitter.start();
 
-                            startButton.setText(getString(R.string.running));
-                            final String startTime = DATE_TIME_FORMAT.format(dataTransmitter.getStart());
+                        urlEditText.setEnabled(false);
+                        chunksSpinner.setEnabled(false);
+                        interValSpinner.setEnabled(false);
+                        progressBar.setVisibility(View.VISIBLE);
+                        startButton.setEnabled(false);
 
-                            startTextView.setText(String.format("Start: %s", startTime));
-                        } catch (URISyntaxException e) {
-                            e.printStackTrace();
-                        }
+                        startButton.setText(getString(R.string.running));
+                        final String startTime = DATE_TIME_FORMAT.format(dataTransmitter.getStart());
+
+                        startTextView.setText(String.format("Start: %s", startTime));
+                        endTextView.setText("End:");
+                    } catch (URISyntaxException e) {
+                        e.printStackTrace();
                     }
+
                 } else {
                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
 
@@ -131,6 +137,43 @@ public class MainActivity extends Activity {
                     AlertDialog dialog = builder.create();
                     dialog.show();
                 }
+
+                AsyncTask<Void, Void, Boolean> waitTask = new AsyncTask<Void, Void, Boolean>() {
+                    @Override
+                    protected Boolean doInBackground(Void... voids) {
+
+                        while(MainActivity.performingSync) {
+                            try {
+                                Thread.sleep(1000, 0);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        return true;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Boolean aBoolean) {
+                        super.onPostExecute(aBoolean);
+
+                        progressBar.setVisibility(View.INVISIBLE);
+                        endTextView.setText(String.format("End: %s", DATE_TIME_FORMAT.format(new Date())));
+
+                        urlEditText.setEnabled(true);
+                        chunksSpinner.setEnabled(true);
+                        interValSpinner.setEnabled(true);
+
+                        startButton.setEnabled(true);
+                        startButton.setText(R.string.start);
+
+                        MainActivity.counter = 0;
+                    }
+                };
+
+                waitTask.execute();
+
+                Log.d(TAG, "After waitTask.execute");
             }
         });
         dataTransmitter = new DataTransmitter(this);

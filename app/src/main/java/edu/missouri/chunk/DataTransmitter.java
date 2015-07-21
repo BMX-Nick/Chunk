@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.os.SystemClock;
 import android.util.Log;
 
 import java.io.DataInputStream;
@@ -21,33 +22,11 @@ import java.util.Date;
 class DataTransmitter {
     private final Context context;
     private Date start;
-    private Date end;
 
     public Date getStart() {
         return start;
     }
 
-    public void setStart(Date start) {
-        this.start = start;
-    }
-
-    public Date getEnd() {
-        return end;
-    }
-
-    public void setEnd(Date end) {
-        this.end = end;
-    }
-
-    /**
-     * Represents the states of the transmitter
-     */
-    private enum State {
-        STARTED,
-        STOPPED
-    }
-
-    private State state = State.STOPPED;
     private URI uri;
     private int size;
     private int freq;
@@ -57,18 +36,12 @@ class DataTransmitter {
      */
     public DataTransmitter(Context context){
         this.context = context;
-        this.state = State.STOPPED;
     }
 
     /**
      *  Starts sending data.
-     *
-     * @throws IllegalStateException Thrown if the transmitter is already running or the uri is null
      */
    public void start() {
-       if(isRunning()) {
-           throw new IllegalStateException("DataTransmitter is already started");
-       }
 
        if(uri == null) {
            throw new IllegalStateException("URI cannot be null");
@@ -78,19 +51,16 @@ class DataTransmitter {
            throw new IllegalStateException("Frequency cannot be null");
        }
 
-       state = State.STARTED;
-
        enableAlarm();
    }
 
     private Context getApplicationContext() {
         return context;
     }
-// ************* TODO: Implement
 
     private void enableAlarm() {
         long millisecondsTilFirstTrigger = 0;
-        long intervalToNextAlarm         =  getFreq() * 1000;
+        long intervalToNextAlarm         =  freq * 1000;
 
         Log.d("DataTransmitter", "Preparing to initiate Alarm Manager. Should start syncing in "
                 + Long.toString(millisecondsTilFirstTrigger)
@@ -125,8 +95,7 @@ class DataTransmitter {
 
         Log.d("DataTransmitter", String.format("About to begin syncing in %d milliseconds, hopefully.", intervalToNextAlarm));
         PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 0, mIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        alarmMgr.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                millisecondsTilFirstTrigger, pendingIntent);
+        alarmMgr.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, millisecondsTilFirstTrigger , pendingIntent);
         start = new Date();
     }
 
@@ -150,102 +119,28 @@ class DataTransmitter {
         return bytes;
     }
 
-
-    private void disableAlarm() {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-// ************
-
-    /**
-     * Stops sending data.
-     *
-     * @throws IllegalStateException Thrown if the transmitter is already stopped
-     */
-    @SuppressWarnings("unused")
-    public void stop() {
-        if(!isRunning()) {
-            throw new IllegalStateException("DataTransmitter is already stopped");
-        }
-
-        state = State.STOPPED;
-
-        disableAlarm();
-    }
-
-    /**
-     *
-     * @return The URI that the data is being sent to
-     */
-    @SuppressWarnings("unused")
-    public URI getUri() {
-        return uri;
-    }
-
     /**
      *
      * @param  uri                   The URI to send data to
-     * @throws IllegalStateException Thrown if the transmitter is already running
      */
     public void setUri(URI uri) {
-       verifyNotRunning();
-
         this.uri = uri;
     }
 
     /**
      *
-     * @return The size of the data that is sent to the URI at each interval
-     */
-    @SuppressWarnings("unused")
-    public int getSize() {
-        return size;
-    }
-
-    /**
-     *
      * @param  size                  The size of the data to send to the URI at each interval
-     * @throws IllegalStateException Thrown if the transmitter is already running
      */
     public void setSize(int size) {
-        verifyNotRunning();
-
         this.size = size;
     }
 
     /**
      *
-     * @return The frequency at which data will be sent
-     */
-    @SuppressWarnings("WeakerAccess")
-    public int getFreq() {
-        return freq;
-    }
-
-    /**
-     *
      * @param  freq                  The frequency at which to send data
-     * @throws IllegalStateException Thrown if the transmitter is already running
      */
     public void setFreq(int freq) {
-        verifyNotRunning();
 
         this.freq = freq;
-    }
-
-    /**
-     *
-     * @return Returns true if the transmitter is running
-     */
-    public boolean isRunning() {
-        return state == State.STARTED;
-    }
-
-    /**
-     * Throws an IllegalStateException if the transmitter is already running.
-     */
-    private void verifyNotRunning() {
-        if (isRunning()) {
-            throw new IllegalStateException("Cannot mutate DataTransmitter while it is running");
-        }
     }
 }

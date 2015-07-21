@@ -7,8 +7,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -16,6 +18,7 @@ import android.widget.Toast;
 import java.net.URI;
 import java.util.Calendar;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
 
 /**
  * @author Jay Kelner
@@ -93,6 +96,7 @@ public class SyncService extends IntentService {
             Log.d(TAG, String.format("Counter is %d", MainActivity.counter));
         } else {
             Log.d(TAG, "Counter reached maximum, stopping");
+            MainActivity.performingSync = false;
         }
     }
 
@@ -101,7 +105,7 @@ public class SyncService extends IntentService {
      */
     private void performSync() {
         try {
-            boolean result = new TransmitData(uri).execute(bytes).get();
+            boolean result = new TransmitData(uri).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, bytes).get();
             if(result)
                 MainActivity.counter++;} catch (InterruptedException e) {
             e.printStackTrace();
