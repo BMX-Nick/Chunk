@@ -40,6 +40,20 @@ public class SyncService extends IntentService {
     }
 
     @Override
+    public void onCreate() {
+        super.onCreate();
+
+        Log.d(TAG, "SyncService creating.");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        Log.d(TAG, "SyncService destroying.");
+    }
+
+    @Override
     protected void onHandleIntent(Intent intent) {
         Log.d(TAG, "Service started in SyncService");
 
@@ -66,7 +80,7 @@ public class SyncService extends IntentService {
         }
 
         if(MainActivity.counter <= 10) {
-            Log.d("SyncService", "Schedule the next service");
+            Log.d(TAG, "Schedule the next service");
             AlarmManager alarmMgr = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
             Intent mIntent = new Intent(getApplicationContext(), SyncService.class);
             mIntent.putExtra("uri", uri);
@@ -76,6 +90,9 @@ public class SyncService extends IntentService {
 
             PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 0, mIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             alarmMgr.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, interval, pendingIntent);
+            Log.d(TAG, String.format("Counter is %d", MainActivity.counter));
+        } else {
+            Log.d(TAG, "Counter reached maximum, stopping");
         }
     }
 
@@ -99,16 +116,5 @@ public class SyncService extends IntentService {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-
     }
-
-
-//    private long getNextLongTime() {
-//        Calendar s = Calendar.getInstance();
-//        s.add(Calendar.MINUTE, 10);
-//        // s.add(Calendar.SECOND, 30);
-//        return s.getTimeInMillis();
-//    }
-
-
 }

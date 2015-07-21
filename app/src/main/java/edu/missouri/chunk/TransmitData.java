@@ -65,6 +65,7 @@ class TransmitData extends AsyncTask<byte[], Void, Boolean> {
                     Log.e(TAG, String.format(POST_ERROR_MSG, uriString, statusCode));
                     break;
                 default:
+                    Log.d(TAG, "Transmission was successful!");
                     break;
             }
         }catch (ClientProtocolException e) {
