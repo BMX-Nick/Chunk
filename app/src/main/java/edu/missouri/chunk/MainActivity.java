@@ -30,8 +30,10 @@ public class MainActivity extends Activity {
     private Spinner     chunksSpinner;
     private Spinner     interValSpinner;
     private Button      startButton;
-    private ProgressBar progressBar;
+    public static ProgressBar progressBar;
     private TextView    startTextView;
+
+    public static int counter;
 
     private static final String[] CHUNKS = new String[]{
             "100",
@@ -51,21 +53,27 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         urlEditText     = (EditText)    findViewById(R.id.urlEdit);
         chunksSpinner   = (Spinner)     findViewById(R.id.chunkSizeSpinner);
         interValSpinner = (Spinner)     findViewById(R.id.intervalSpinner);
         progressBar     = (ProgressBar) findViewById(R.id.progressBar);
         startButton     = (Button)      findViewById(R.id.startButton);
 
+        counter = 0;
+
         progressBar.setVisibility(View.INVISIBLE);
 
         startTextView = (TextView) findViewById(R.id.startTextView);
+
+
 
         ArrayAdapter<String> chunk    = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, CHUNKS);
         ArrayAdapter<String> interval = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, INTERVALS);
 
         chunksSpinner.setAdapter(chunk);
         interValSpinner.setAdapter(interval);
+
 
         // On click listener
         startButton.setOnClickListener(new View.OnClickListener() {

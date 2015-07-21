@@ -102,6 +102,7 @@ class DataTransmitter {
         AlarmManager alarmMgr = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
         Intent mIntent = new Intent(getApplicationContext(), SyncService.class);
         mIntent.putExtra("uri", uri);
+        mIntent.putExtra("interval", intervalToNextAlarm);
 
         InputStream is;
 
@@ -124,9 +125,8 @@ class DataTransmitter {
 
         Log.d("DataTransmitter", String.format("About to begin syncing in %d milliseconds, hopefully.", intervalToNextAlarm));
         PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 0, mIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                millisecondsTilFirstTrigger,
-                intervalToNextAlarm, pendingIntent);
+        alarmMgr.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                millisecondsTilFirstTrigger, pendingIntent);
         start = new Date();
     }
 
