@@ -144,7 +144,7 @@ public class MainActivity extends Activity {
 
                         while(MainActivity.performingSync) {
                             try {
-                                Thread.sleep(1000, 0);
+                                Thread.sleep(500, 0);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }

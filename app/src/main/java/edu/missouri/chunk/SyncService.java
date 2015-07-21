@@ -26,6 +26,7 @@ import java.util.concurrent.Executor;
 public class SyncService extends IntentService {
 
     private static final String TAG = "SyncService";
+    public static final int PACKET_COUNT = 2;
 
     private URI uri;
 
@@ -82,7 +83,7 @@ public class SyncService extends IntentService {
             Log.e(TAG, "sync failed in onHandleIntent: no connectivity was detected.");
         }
 
-        if(MainActivity.counter <= 10) {
+        if(MainActivity.counter <= PACKET_COUNT) {
             Log.d(TAG, "Schedule the next service");
             AlarmManager alarmMgr = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
             Intent mIntent = new Intent(getApplicationContext(), SyncService.class);
