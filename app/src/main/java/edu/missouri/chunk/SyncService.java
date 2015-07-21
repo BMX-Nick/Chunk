@@ -100,18 +100,10 @@ public class SyncService extends IntentService {
      * Performs the synchronization with the server using TransmitJSONData
      */
     private void performSync() {
-
-
         try {
             boolean result = new TransmitData(uri).execute(bytes).get();
             if(result)
-                MainActivity.counter++;
-
-
-            Toast.makeText(getApplicationContext(), String.valueOf(MainActivity.counter), Toast.LENGTH_SHORT).show();
-
-
-        } catch (InterruptedException e) {
+                MainActivity.counter++;} catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
