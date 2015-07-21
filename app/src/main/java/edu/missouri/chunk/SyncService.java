@@ -77,9 +77,6 @@ public class SyncService extends IntentService {
             PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 0, mIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             alarmMgr.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, interval, pendingIntent);
         }
-        else {
-            MainActivity.progressBar.setVisibility(View.INVISIBLE);
-        }
     }
 
     /**
