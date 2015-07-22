@@ -82,15 +82,15 @@ class DataTransmitter {
             Resources resources = context.getResources();
 
             switch (size) {
-                case 1024:
-                    is = resources.openRawResource(R.raw.onemb);
+                case 50_000:
+                    is = resources.openRawResource(R.raw.fiftyk);
                     break;
-                case 10240:
-                    is = resources.openRawResource(R.raw.tenmb);
+                case 500_000:
+                    is = resources.openRawResource(R.raw.fivehundredk);
                     break;
-                case 100:
+                case 5_000_000:
                 default:
-                    is = resources.openRawResource(R.raw.hundredkb);
+                    is = resources.openRawResource(R.raw.fivem);
                     break;
             }
 

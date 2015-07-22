@@ -19,7 +19,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * @author Jay Kelner
  */
-class SyncService extends IntentService {
+public class SyncService extends IntentService {
 
     private static final String TAG = "SyncService";
     private static final int PACKET_COUNT = 2;
