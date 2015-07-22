@@ -30,8 +30,6 @@ public class SyncService extends IntentService {
 
     private URI uri;
 
-    private byte[] bytes;
-
     private long interval;
 
     public SyncService(){
@@ -65,8 +63,6 @@ public class SyncService extends IntentService {
 
         uri  = (URI) extras.get("uri");
 
-        bytes = (byte[]) extras.get("bytes");
-
         interval =  extras.getLong("interval");
 
         // Create a connectivity manager to monitor our connection status.
@@ -76,30 +72,31 @@ public class SyncService extends IntentService {
 
         boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
 
-        // If the phone isConnected to the internet, perform the sync.
-        if (isConnected) {
-            performSync();
-        } else {
-            Log.e(TAG, "sync failed in onHandleIntent: no connectivity was detected.");
-        }
+        if(MainActivity.counter < PACKET_COUNT) {
 
-        if(MainActivity.counter <= PACKET_COUNT) {
-            Log.d(TAG, "Schedule the next service");
-            AlarmManager alarmMgr = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-            Intent mIntent = new Intent(getApplicationContext(), SyncService.class);
-            mIntent.putExtra("uri", uri);
-            mIntent.putExtra("bytes", bytes);
-            mIntent.putExtra("interval", interval);
-            Log.d("DataTransmitter", String.format("About to begin syncing in %d milliseconds, hopefully.", interval));
+            // If the phone isConnected to the internet, perform the sync.
+            if (isConnected) {
+                performSync();
+            } else {
+                Log.e(TAG, "sync failed in onHandleIntent: no connectivity was detected.");
+            }
 
-            PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 0, mIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-            final long timeOfNextSync = Calendar.getInstance().getTimeInMillis() + interval;
+            if(MainActivity.counter != PACKET_COUNT) {
+                Log.d(TAG, "Schedule the next service");
+                AlarmManager alarmMgr = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+                Intent mIntent = new Intent(getApplicationContext(), SyncService.class);
+                mIntent.putExtra("uri", uri);
+                mIntent.putExtra("interval", interval);
+                Log.d("DataTransmitter", String.format("About to begin syncing in %d milliseconds, hopefully.", interval));
 
-            alarmMgr.setExact(AlarmManager.RTC_WAKEUP, timeOfNextSync, pendingIntent);
-            Log.d(TAG, String.format("Counter is %d", MainActivity.counter));
-        } else {
-            Log.d(TAG, "Counter reached maximum, stopping");
-            MainActivity.performingSync = false;
+                PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 0, mIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                final long timeOfNextSync = Calendar.getInstance().getTimeInMillis() + interval;
+                alarmMgr.setExact(AlarmManager.RTC_WAKEUP, timeOfNextSync, pendingIntent);
+                Log.d(TAG, String.format("Counter is %d", MainActivity.counter));
+            }else {
+                Log.d(TAG, String.format("Counter reached maximum: %d, stopping", PACKET_COUNT));
+                MainActivity.performingSync = false;
+            }
         }
     }
 
@@ -108,7 +105,7 @@ public class SyncService extends IntentService {
      */
     private void performSync() {
         try {
-            boolean result = new TransmitData(uri).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, bytes).get();
+            boolean result = new TransmitData(uri).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, DataTransmitter.bytes).get();
             if(result)
                 MainActivity.counter++;} catch (InterruptedException e) {
             e.printStackTrace();

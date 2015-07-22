@@ -23,6 +23,7 @@ import java.util.Date;
 class DataTransmitter {
     private final Context context;
     private Date start;
+    public static byte[] bytes;
 
     public Date getStart() {
         return start;
@@ -75,24 +76,35 @@ class DataTransmitter {
         mIntent.putExtra("uri", uri);
         mIntent.putExtra("interval", intervalToNextAlarm);
 
-        InputStream is;
+        InputStream is = null;
 
-        Resources resources = context.getResources();
+        try {
 
-        switch (size) {
-            case 1024:
-                is = resources.openRawResource(R.raw.onemb);
-                break;
-            case 10240:
-                is = resources.openRawResource(R.raw.tenmb);
-                break;
-            case 100:
-            default:
-                is = resources.openRawResource(R.raw.hundredkb);
-                break;
+            Resources resources = context.getResources();
+
+            switch (size) {
+                case 1024:
+                    is = resources.openRawResource(R.raw.onemb);
+                    break;
+                case 10240:
+                    is = resources.openRawResource(R.raw.tenmb);
+                    break;
+                case 100:
+                default:
+                    is = resources.openRawResource(R.raw.hundredkb);
+                    break;
+            }
+
+            bytes = toByteArray(is);
+        } finally {
+            if(is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
-
-        mIntent.putExtra("bytes", toByteArray(is));
 
         Log.d("DataTransmitter", String.format("About to begin syncing in %d milliseconds, hopefully.", millisecondsTilFirstTrigger));
         PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 0, mIntent, PendingIntent.FLAG_UPDATE_CURRENT);
