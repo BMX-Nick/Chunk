@@ -2,7 +2,10 @@ package edu.missouri.chunk;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -84,6 +87,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
 
+
                 final boolean areFieldsSet =
                            chunksSpinner.getSelectedItem().toString().length()   > 0
                         && interValSpinner.getSelectedItem().toString().length() > 0
@@ -159,6 +163,10 @@ public class MainActivity extends Activity {
 
                         progressBar.setVisibility(View.INVISIBLE);
                         endTextView.setText(String.format("End: %s", DATE_TIME_FORMAT.format(new Date())));
+                        Context ctx = getApplicationContext();
+                        AudioManager audioManager = (AudioManager) ctx.getSystemService(Context.AUDIO_SERVICE);
+                        MediaPlayer mediaPlayer = MediaPlayer.create(ctx, R.raw.sound_file_1);
+                        mediaPlayer.start();
 
                         urlEditText.setEnabled(true);
                         chunksSpinner.setEnabled(true);
