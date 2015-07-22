@@ -26,7 +26,7 @@ import java.util.concurrent.Executor;
 public class SyncService extends IntentService {
 
     private static final String TAG = "SyncService";
-    public static final int PACKET_COUNT = 2;
+    public static final int PACKET_COUNT = 10;
 
     private URI uri;
 
@@ -93,7 +93,9 @@ public class SyncService extends IntentService {
             Log.d("DataTransmitter", String.format("About to begin syncing in %d milliseconds, hopefully.", interval));
 
             PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 0, mIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-            alarmMgr.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, interval, pendingIntent);
+            final long timeOfNextSync = Calendar.getInstance().getTimeInMillis() + interval;
+
+            alarmMgr.setExact(AlarmManager.RTC_WAKEUP, timeOfNextSync, pendingIntent);
             Log.d(TAG, String.format("Counter is %d", MainActivity.counter));
         } else {
             Log.d(TAG, "Counter reached maximum, stopping");

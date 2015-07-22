@@ -12,6 +12,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -93,9 +94,11 @@ class DataTransmitter {
 
         mIntent.putExtra("bytes", toByteArray(is));
 
-        Log.d("DataTransmitter", String.format("About to begin syncing in %d milliseconds, hopefully.", intervalToNextAlarm));
+        Log.d("DataTransmitter", String.format("About to begin syncing in %d milliseconds, hopefully.", millisecondsTilFirstTrigger));
         PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 0, mIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        alarmMgr.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, millisecondsTilFirstTrigger , pendingIntent);
+        final long timeOfNextSync = Calendar.getInstance().getTimeInMillis() + millisecondsTilFirstTrigger;
+
+        alarmMgr.setExact(AlarmManager.RTC_WAKEUP, timeOfNextSync, pendingIntent);
         start = new Date();
     }
 
