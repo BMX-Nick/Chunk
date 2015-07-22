@@ -10,27 +10,21 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.SystemClock;
 import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
 
 import java.net.URI;
 import java.util.Calendar;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
 
 /**
  * @author Jay Kelner
  */
-public class SyncService extends IntentService {
+class SyncService extends IntentService {
 
     private static final String TAG = "SyncService";
-    public static final int PACKET_COUNT = 10;
+    private static final int PACKET_COUNT = 2;
 
     private URI uri;
-
-    private long interval;
 
     public SyncService(){
         super("SyncService");
@@ -63,7 +57,7 @@ public class SyncService extends IntentService {
 
         uri  = (URI) extras.get("uri");
 
-        interval =  extras.getLong("interval");
+        long interval = extras.getLong("interval");
 
         // Create a connectivity manager to monitor our connection status.
         Context             context       = getApplicationContext();
@@ -107,9 +101,8 @@ public class SyncService extends IntentService {
         try {
             boolean result = new TransmitData(uri).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, DataTransmitter.bytes).get();
             if(result)
-                MainActivity.counter++;} catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+                MainActivity.counter++;
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
     }

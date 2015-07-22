@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -27,8 +26,8 @@ import java.util.Date;
 public class MainActivity extends Activity {
 
     private static final String TAG = "MainActivity";
-    public static final DateFormat DATE_TIME_FORMAT = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.LONG);
-    public static boolean performingSync;
+    private final DateFormat DATE_TIME_FORMAT = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.LONG);
+    static boolean performingSync;
 
     private DataTransmitter dataTransmitter;
 
@@ -36,21 +35,21 @@ public class MainActivity extends Activity {
     private Spinner     chunksSpinner;
     private Spinner     interValSpinner;
     private Button      startButton;
-    public static ProgressBar progressBar;
+    private ProgressBar progressBar;
     private TextView    startTextView;
     private TextView    endTextView;
 
-    public static int counter;
+    static int counter;
 
     private static final String[] CHUNKS = new String[]{
-            "100",
-            "1024",
-            "10240"
+            "50",
+            "500",
+            "1000"
     };
 
     private static final String[] INTERVALS = new String[]{
             "60",
-            "300",
+            "330",
             "600"
     };
 
@@ -164,7 +163,6 @@ public class MainActivity extends Activity {
                         progressBar.setVisibility(View.INVISIBLE);
                         endTextView.setText(String.format("End: %s", DATE_TIME_FORMAT.format(new Date())));
                         Context ctx = getApplicationContext();
-                        AudioManager audioManager = (AudioManager) ctx.getSystemService(Context.AUDIO_SERVICE);
                         MediaPlayer mediaPlayer = MediaPlayer.create(ctx, R.raw.sound_file_1);
                         mediaPlayer.start();
 
