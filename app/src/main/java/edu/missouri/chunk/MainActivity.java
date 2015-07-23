@@ -119,6 +119,8 @@ public class MainActivity extends Activity {
                                 startButton.setText("Please unplug your charger!");
                             } else {
 
+                                unregisterReceiver(this);
+
                                 // Collect the user input
                                 int chunkSizeKB = Integer.parseInt(chunksSpinner.getSelectedItem().toString());
                                 int intervalSeconds = Integer.parseInt(interValSpinner.getSelectedItem().toString());
