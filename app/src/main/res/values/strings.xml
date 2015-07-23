@@ -5,4 +5,8 @@
     <string name="start">Start</string>
     <string name="defaultUrl">http://dslsrv8.cs.missouri.edu/~jmkwdf/CrtNIMH/example.php</string>
     <string name="running">Running…</string>
+    <string name="Info">Info</string>
+    <string name="Start">Start:</string>
+    <string name="End">End:</string>
+    <string name="Battery">Battery:</string>
 </resources>
