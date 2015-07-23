@@ -27,6 +27,10 @@ import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.util.Date;
 
+import static android.os.BatteryManager.BATTERY_PLUGGED_AC;
+import static android.os.BatteryManager.BATTERY_PLUGGED_USB;
+import static android.os.BatteryManager.BATTERY_PLUGGED_WIRELESS;
+import static android.os.BatteryManager.BATTERY_STATUS_CHARGING;
 import static android.os.BatteryManager.EXTRA_LEVEL;
 
 public class MainActivity extends Activity {
@@ -61,14 +65,7 @@ public class MainActivity extends Activity {
     };
 
 
-    private BroadcastReceiver batteryReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            int level = intent.getIntExtra(EXTRA_LEVEL, 0);
 
-            batteryTextView.setText(String.format("Battery:  %s", level));
-        }
-    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,12 +92,105 @@ public class MainActivity extends Activity {
         chunksSpinner.setAdapter(chunk);
         interValSpinner.setAdapter(interval);
 
-
         // On click listener
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                BroadcastReceiver batteryReceiver = new BroadcastReceiver() {
+                    public static final int TRIGGER = 78;
 
+                    @Override
+                    public void onReceive(Context context, Intent intent) {
+                        int level = intent.getIntExtra(EXTRA_LEVEL, 0);
+
+                        int  charging = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0);
+
+                        boolean isChargingAC       = charging == BATTERY_PLUGGED_AC;
+                        boolean isChargingUsb      = charging == BATTERY_PLUGGED_USB;
+                        boolean isChargingWireless = charging == BATTERY_PLUGGED_WIRELESS;
+
+                        boolean isCharging         = isChargingAC || isChargingUsb || isChargingWireless;
+
+                        batteryTextView.setText(String.format("Battery: %d", level));
+
+                        if(level == TRIGGER) {
+
+                            if(isCharging) {
+                                startButton.setText("Please unplug your charger!");
+                            } else {
+
+                                // Collect the user input
+                                int chunkSizeKB = Integer.parseInt(chunksSpinner.getSelectedItem().toString());
+                                int intervalSeconds = Integer.parseInt(interValSpinner.getSelectedItem().toString());
+                                URI uri;
+
+                                try {
+                                    uri = new URI(urlEditText.getText().toString());
+
+                                    performingSync = true;
+
+                                    // Initialize and start the data transmitter.
+                                    Log.d(TAG, "Initializing and starting data transmitter");
+                                    dataTransmitter.setFreq(intervalSeconds);
+                                    dataTransmitter.setSize(chunkSizeKB);
+                                    dataTransmitter.setUri(uri);
+                                    dataTransmitter.start();
+
+                                    startButton.setText(getString(R.string.running));
+                                    final String startTime = DATE_TIME_FORMAT.format(dataTransmitter.getStart());
+
+                                    startTextView.setText(String.format("Start: %s", startTime));
+                                    endTextView.setText("End:");
+
+                                    AsyncTask<Void, Void, Boolean> waitTask = new AsyncTask<Void, Void, Boolean>() {
+                                        @Override
+                                        protected Boolean doInBackground(Void... voids) {
+
+                                            while(MainActivity.performingSync) {
+                                                try {
+                                                    Thread.sleep(500, 0);
+                                                } catch (InterruptedException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+
+                                            return true;
+                                        }
+
+                                        @Override
+                                        protected void onPostExecute(Boolean aBoolean) {
+                                            super.onPostExecute(aBoolean);
+
+                                            progressBar.setVisibility(View.INVISIBLE);
+                                            endTextView.setText(String.format("End: %s", DATE_TIME_FORMAT.format(new Date())));
+                                            Context ctx = getApplicationContext();
+                                            MediaPlayer mediaPlayer = MediaPlayer.create(ctx, R.raw.sound_file_1);
+                                            mediaPlayer.start();
+
+                                            urlEditText.setEnabled(true);
+                                            chunksSpinner.setEnabled(true);
+                                            interValSpinner.setEnabled(true);
+
+                                            startButton.setEnabled(true);
+                                            startButton.setText(R.string.start);
+
+                                            MainActivity.counter = 0;
+                                        }
+                                    };
+
+                                    waitTask.execute();
+                                } catch (URISyntaxException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+            /*
+            if the battery is at or greater than amount, play message and enable button if not running
+            if the battery is below amount disable button if not running
+            if the phone is plugged in to a power source and the button has been clicked, display a message and do not run
+             */
+                    }
+                };
 
                 final boolean areFieldsSet =
                            chunksSpinner.getSelectedItem().toString().length()   > 0
@@ -110,37 +200,15 @@ public class MainActivity extends Activity {
                 // If all the fields are filled out when start is pressed,
                 if (areFieldsSet) {
 
-                    // Collect the user input
-                    int chunkSizeKB     = Integer.parseInt(chunksSpinner.getSelectedItem().toString());
-                    int intervalSeconds = Integer.parseInt(interValSpinner.getSelectedItem().toString());
-                    URI uri;
+                    registerReceiver(batteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 
-                    try {
-                        uri = new URI(urlEditText.getText().toString());
-
-                        performingSync = true;
-
-                        // Initialize and start the data transmitter.
-                        Log.d(TAG, "Initializing and starting data transmitter");
-                        dataTransmitter.setFreq(intervalSeconds);
-                        dataTransmitter.setSize(chunkSizeKB);
-                        dataTransmitter.setUri(uri);
-                        dataTransmitter.start();
-
-                        urlEditText.setEnabled(false);
-                        chunksSpinner.setEnabled(false);
-                        interValSpinner.setEnabled(false);
-                        progressBar.setVisibility(View.VISIBLE);
-                        startButton.setEnabled(false);
-
-                        startButton.setText(getString(R.string.running));
-                        final String startTime = DATE_TIME_FORMAT.format(dataTransmitter.getStart());
-
-                        startTextView.setText(String.format("Start: %s", startTime));
-                        endTextView.setText("End:");
-                    } catch (URISyntaxException e) {
-                        e.printStackTrace();
-                    }
+                    startButton.setEnabled(false);
+                    urlEditText.setEnabled(false);
+                    chunksSpinner.setEnabled(false);
+                    interValSpinner.setEnabled(false);
+                    progressBar.setVisibility(View.VISIBLE);
+                    startButton.setEnabled(false);
+                    startButton.setText("Waiting for battery...");
 
                 } else {
                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -156,50 +224,12 @@ public class MainActivity extends Activity {
                     dialog.show();
                 }
 
-                AsyncTask<Void, Void, Boolean> waitTask = new AsyncTask<Void, Void, Boolean>() {
-                    @Override
-                    protected Boolean doInBackground(Void... voids) {
-
-                        while(MainActivity.performingSync) {
-                            try {
-                                Thread.sleep(500, 0);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-                        return true;
-                    }
-
-                    @Override
-                    protected void onPostExecute(Boolean aBoolean) {
-                        super.onPostExecute(aBoolean);
-
-                        progressBar.setVisibility(View.INVISIBLE);
-                        endTextView.setText(String.format("End: %s", DATE_TIME_FORMAT.format(new Date())));
-                        Context ctx = getApplicationContext();
-                        MediaPlayer mediaPlayer = MediaPlayer.create(ctx, R.raw.sound_file_1);
-                        mediaPlayer.start();
-
-                        urlEditText.setEnabled(true);
-                        chunksSpinner.setEnabled(true);
-                        interValSpinner.setEnabled(true);
-
-                        startButton.setEnabled(true);
-                        startButton.setText(R.string.start);
-
-                        MainActivity.counter = 0;
-                    }
-                };
-
-                waitTask.execute();
-
                 Log.d(TAG, "After waitTask.execute");
             }
         });
         dataTransmitter = new DataTransmitter(this);
 
-        registerReceiver(batteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+
     }
 
     @Override
