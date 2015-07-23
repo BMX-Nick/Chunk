@@ -3,7 +3,7 @@
     <string name="action_settings">Settings</string>
     <string name="URL">URL</string>
     <string name="start">Start</string>
-    <string name="defaultUrl">http://dslsrv8.cs.missouri.edu/~jmkwdf/CrtNIMH/example.php</string>
+    <string name="defaultUrl">http://dslsrv8.cs.missouri.edu/~jmkwdf/CrtNIMH/example2.php</string>
     <string name="running">Running…</string>
     <string name="Info">Info</string>
     <string name="Start">Start:</string>

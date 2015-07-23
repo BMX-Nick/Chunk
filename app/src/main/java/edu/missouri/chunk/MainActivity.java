@@ -34,7 +34,7 @@ import static android.os.BatteryManager.EXTRA_LEVEL;
 
 public class MainActivity extends Activity {
     private class BatteryReceiver extends BroadcastReceiver {
-        public static final int TRIGGER = 78;
+        public static final int TRIGGER = 90;
 
         @Override
         public void onReceive(Context context, Intent intent) {
