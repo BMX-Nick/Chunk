@@ -90,7 +90,7 @@ class DataTransmitter {
                     break;
                 case 5_000_000:
                 default:
-                    is = resources.openRawResource(R.raw.fivem);
+                    is = resources.openRawResource(R.raw.fivethousandk);
                     break;
             }
 

@@ -2,10 +2,14 @@ package edu.missouri.chunk;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
+import android.os.BatteryManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -23,6 +27,8 @@ import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.util.Date;
 
+import static android.os.BatteryManager.EXTRA_LEVEL;
+
 public class MainActivity extends Activity {
 
     private static final String TAG = "MainActivity";
@@ -38,6 +44,7 @@ public class MainActivity extends Activity {
     private ProgressBar progressBar;
     private TextView    startTextView;
     private TextView    endTextView;
+    private TextView    batteryTextView;
 
     static int counter;
 
@@ -54,6 +61,14 @@ public class MainActivity extends Activity {
     };
 
 
+    private BroadcastReceiver batteryReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int level = intent.getIntExtra(EXTRA_LEVEL, 0);
+
+            batteryTextView.setText(String.format("Battery:  %s", level));
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,7 +87,7 @@ public class MainActivity extends Activity {
 
         startTextView = (TextView) findViewById(R.id.startTextView);
         endTextView = (TextView) findViewById(R.id.endTextView);
-
+        batteryTextView = (TextView) findViewById(R.id.batteryTextView);
 
         ArrayAdapter<String> chunk    = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, CHUNKS);
         final ArrayAdapter<String> interval = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, INTERVALS);
@@ -184,7 +199,7 @@ public class MainActivity extends Activity {
         });
         dataTransmitter = new DataTransmitter(this);
 
-
+        registerReceiver(batteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
     }
 
     @Override

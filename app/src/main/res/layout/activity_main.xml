@@ -92,7 +92,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Battery:"
-        android:id="@+id/textView2"
+        android:id="@+id/batteryTextView"
         android:layout_alignParentStart="true"
         android:layout_above="@+id/startButton"
         android:layout_alignParentEnd="true"
