@@ -194,7 +194,7 @@ public class MainActivity extends Activity {
     private static final String[] CHUNKS = new String[]{
             "50",
             "500",
-            "1000"
+            "5000"
     };
 
     private static final String[] INTERVALS = new String[]{
